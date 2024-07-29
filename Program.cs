@@ -83,6 +83,8 @@ class Program
             }
             .Concat(targetAnime.synonyms)
             .Where(s => s != null)
+            .Where(s => !s.Equals(title, StringComparison.OrdinalIgnoreCase))
+            .Distinct()
             .ToArray();
 
         string al = string.Join("\n", aliases.Select(a => $"  - {a}"));
