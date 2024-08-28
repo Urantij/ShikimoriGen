@@ -9,14 +9,18 @@ namespace ShikimoriGen;
 
 class Program
 {
-    static async Task Main(string[] args)
+    static async Task Main(string[] appArgs)
     {
         Console.WriteLine("Hello, World!");
+
+        string? targetPath = appArgs.Length > 1 ? appArgs.First() : null;
+
+        string targetSearch = appArgs.Last();
 
         // было бы здорово из модели целиком генерировать запрос, но рефлексия это далёкое будущее.
         // да и aot кабутабы поприкольнее... ну ладно.
         string query = new Query<Anime>("animes")
-            .AddArgument("search", args[0])
+            .AddArgument("search", targetSearch)
             .AddArgument("limit", 5)
             .AddArgument("order", Order.aired_on)
             .AddField(anime => anime.name)
@@ -89,7 +93,7 @@ class Program
 
         string al = string.Join("\n", aliases.Select(a => $"  - {a}"));
 
-        string path = Path.Combine(args.Length < 2 ? "./" : args[1], $"{title}.md");
+        string path = Path.Combine(targetPath ?? "./", $"{title}.md");
 
         await File.WriteAllTextAsync(path, $"""
                                             ---
