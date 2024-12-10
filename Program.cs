@@ -13,15 +13,13 @@ class Program
     {
         Console.WriteLine("Hello, World!");
 
-        string? targetPath = appArgs.Length > 1 ? appArgs.First() : null;
-
-        string targetSearch = appArgs.Last();
+        Arguments args = ArgumentsParser.Parse(appArgs);
 
         // было бы здорово из модели целиком генерировать запрос, но рефлексия это далёкое будущее.
         // да и aot кабутабы поприкольнее... ну ладно.
         string query = new Query<Anime>("animes")
-            .AddArgument("search", targetSearch)
-            .AddArgument("limit", 5)
+            .AddArgument("search", args.Search)
+            .AddArgument("limit", args.Limit)
             .AddArgument("order", Order.aired_on)
             .AddField(anime => anime.name)
             .AddField(anime => anime.russian)
@@ -93,7 +91,7 @@ class Program
 
         string al = string.Join("\n", aliases.Select(a => $"  - {a}"));
 
-        string path = Path.Combine(targetPath ?? "./", $"{title}.md");
+        string path = Path.Combine(args.FolderPath ?? "./", $"{title}.md");
 
         await File.WriteAllTextAsync(path, $"""
                                             ---
